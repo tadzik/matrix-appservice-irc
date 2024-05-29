@@ -8,6 +8,7 @@ import {
     StateLookup,
     StateLookupEvent,
     Intent,
+    MediaProxy,
 } from "matrix-appservice-bridge";
 import { IrcUser } from "../models/IrcUser";
 import { ActionType, MatrixAction, MatrixMessageEvent } from "../models/MatrixAction";
@@ -142,7 +143,6 @@ export class MatrixHandler {
     private readonly metrics: {[domain: string]: {
             [metricName: string]: number;
         };} = {};
-    private readonly mediaUrl: string;
     private memberTracker?: StateLookup;
     private adminHandler: AdminRoomHandler;
     private config: MatrixHandlerConfig = DEFAULTS;
@@ -155,13 +155,14 @@ export class MatrixHandler {
     constructor(
         private readonly ircBridge: IrcBridge,
         config: MatrixHandlerConfig|undefined,
-        private readonly membershipQueue: MembershipQueue
+        private readonly membershipQueue: MembershipQueue,
     ) {
         this.onConfigChanged(config);
-
-        // The media URL to use to transform mxc:// URLs when handling m.room.[file|image]s
-        this.mediaUrl = ircBridge.config.homeserver.media_url || ircBridge.config.homeserver.url;
         this.adminHandler = new AdminRoomHandler(ircBridge, this);
+    }
+
+    private get mediaProxy(): MediaProxy {
+        return this.ircBridge.mediaProxy;
     }
 
     public initialise() {
@@ -909,9 +910,7 @@ export class MatrixHandler {
             req.log.debug("Message body: %s", event.content.body);
         }
 
-        const mxAction = MatrixAction.fromEvent(
-            event, this.mediaUrl
-        );
+        const mxAction = await MatrixAction.fromEvent(event, this.mediaProxy);
 
         // check if this message is from one of our virtual users
         const servers = this.ircBridge.getServers();
@@ -1171,7 +1170,7 @@ export class MatrixHandler {
 
         // This is true if the upload was a success
         if (contentUri) {
-            const httpUrl = ContentRepo.getHttpUriForMxc(this.mediaUrl, contentUri);
+            const httpUrl = await this.mediaProxy.generateMediaUrl(contentUri);
             // we check event.content.body since ircAction already has the markers stripped
             const codeBlockMatch = event.content.body.match(/^```(\w+)?/);
             if (codeBlockMatch) {
@@ -1182,7 +1181,7 @@ export class MatrixHandler {
                 };
             }
             else {
-                const explanation = renderTemplate(this.config.truncatedMessageTemplate, { url: httpUrl });
+                const explanation = renderTemplate(this.config.truncatedMessageTemplate, { url: httpUrl.toString() });
                 let messagePreview = trimString(
                     potentialMessages[0],
                     ircClient.getMaxLineLength() - 4 /* "... " */ - explanation.length - ircRoom.channel.length
@@ -1198,7 +1197,7 @@ export class MatrixHandler {
             }
 
             const truncatedIrcAction = IrcAction.fromMatrixAction(
-                MatrixAction.fromEvent(event, this.mediaUrl)
+                await MatrixAction.fromEvent(event, this.mediaProxy)
             );
             if (truncatedIrcAction) {
                 await this.ircBridge.sendIrcAction(ircRoom, ircClient, truncatedIrcAction);
@@ -1220,9 +1219,9 @@ export class MatrixHandler {
 
             // Recreate action from modified event
             const truncatedIrcAction = IrcAction.fromMatrixAction(
-                MatrixAction.fromEvent(
+                await MatrixAction.fromEvent(
                     sendingEvent,
-                    this.mediaUrl,
+                    this.mediaProxy,
                 )
             );
             if (truncatedIrcAction) {

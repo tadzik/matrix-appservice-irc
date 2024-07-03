@@ -53,8 +53,9 @@ const STYLE_COLOR = '\u0003';
 const STYLE_BOLD = '\u0002';
 const STYLE_MONOSPACE = '\u0011';
 const STYLE_ITALICS = '\u001d';
+const STYLE_STRIKE = '\u001e';
 const STYLE_UNDERLINE = '\u001f';
-const STYLE_CODES = [STYLE_BOLD, STYLE_MONOSPACE, STYLE_ITALICS, STYLE_UNDERLINE];
+const STYLE_CODES = [STYLE_BOLD, STYLE_MONOSPACE, STYLE_ITALICS, STYLE_STRIKE, STYLE_UNDERLINE];
 const RESET_CODE = '\u000f';
 const REVERSE_CODE = '\u0016';
 
@@ -181,7 +182,7 @@ export function htmlToIrc(html?: string): string|null {
     const replacements: [RegExp, string][] = [
         [/<b>/g, STYLE_BOLD], [/<u>/g, STYLE_UNDERLINE], [/<i>/g, STYLE_ITALICS],
         [/<strong>/g, STYLE_BOLD], [/<em>/g, STYLE_ITALICS],
-        [/<code>/g, STYLE_MONOSPACE],
+        [/<del>/g, STYLE_STRIKE], [/<code>/g, STYLE_MONOSPACE],
     ];
     Object.keys(htmlNamesToColorCodes).forEach(function(htmlColor) {
         replacements.push([
@@ -199,6 +200,7 @@ export function htmlToIrc(html?: string): string|null {
     const openStyleCodes = [];
     const closeTagsToStyle: {[tag: string]: string} = {
         "</b>": STYLE_BOLD,
+        "</del>": STYLE_STRIKE,
         "</code>": STYLE_MONOSPACE,
         "</u>": STYLE_UNDERLINE,
         "</i>": STYLE_ITALICS,
@@ -283,6 +285,9 @@ export function ircToHtml(text: string): string {
 
             case STYLE_MONOSPACE:
                 return htmlTag(state, 'code');
+
+            case STYLE_STRIKE:
+                return htmlTag(state, 'del');
 
             case STYLE_ITALICS:
                 return htmlTag(state, 'i');

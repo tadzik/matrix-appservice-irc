@@ -148,9 +148,6 @@ export class MatrixHandler {
     private config: MatrixHandlerConfig = DEFAULTS;
 
     private memberJoinDefaultTs = Date.now();
-    private memberJoinTs = new QuickLRU<string, number>({
-        maxSize: 8192,
-    });
 
     constructor(
         private readonly ircBridge: IrcBridge,
@@ -414,10 +411,14 @@ export class MatrixHandler {
      */
     private _onMemberEvent(req: BridgeRequest, event: OnMemberEventData) {
         if (event.content.membership === 'join') {
-            this.memberJoinTs.set(`${event.room_id}/${event.state_key}`, Date.now());
+            void this.ircBridge.getStore().setMemberJoinTs(event.room_id, event.state_key, Date.now()).catch(err => {
+                req.log.error(`Failed to set join time for user ${event.state_key} in ${event.room_id}: ${err}`);
+            });
         }
         else {
-            this.memberJoinTs.delete(`${event.room_id}/${event.state_key}`);
+            void this.ircBridge.getStore().clearMemberJoinTs(event.room_id, event.state_key).catch(err => {
+                req.log.error(`Failed to clear join time for user ${event.state_key} in ${event.room_id}: ${err}`);
+            });
         }
         this.memberTracker?.onEvent(event);
     }
@@ -1352,7 +1353,7 @@ export class MatrixHandler {
             rplSource = cachedEvent.body;
         }
 
-        const senderJoinTs = this.memberJoinTs.get(`${event.room_id}/${event.sender}`) ?? this.memberJoinDefaultTs;
+        const senderJoinTs = await this.ircBridge.getStore().getMemberJoinTs(event.room_id, event.sender) ?? this.memberJoinDefaultTs;
         if (senderJoinTs > cachedEvent.timestamp) {
             // User joined AFTER the event was sent (or left and joined, but we can't distinguish that).
             // Do not treat as a reply.

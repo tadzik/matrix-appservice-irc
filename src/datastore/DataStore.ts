@@ -198,4 +198,8 @@ export interface DataStore extends ProvisioningStore {
     getRoomCount(): Promise<number>;
 
     destroy(): Promise<void>;
+
+    getMemberJoinTs(room_id: string, user_id: string): Promise<number|undefined>;
+    setMemberJoinTs(room_id: string, user_id: string, ts: number): Promise<void>;
+    clearMemberJoinTs(room_id: string, user_id: string): Promise<void>;
 }

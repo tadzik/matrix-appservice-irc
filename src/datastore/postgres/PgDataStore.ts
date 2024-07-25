@@ -778,6 +778,29 @@ export class PgDataStore implements DataStore, ProvisioningStore {
         );
     }
 
+    public async getMemberJoinTs(room_id: string, user_id: string): Promise<number|undefined> {
+        const res = await this.pgPool.query<{ timestamp: number }>(
+            'SELECT timestamp FROM member_join_times WHERE user_id = ? AND room_id = ?', [user_id, room_id]
+        );
+        return res?.rows[0].timestamp;
+    }
+
+    public async setMemberJoinTs(room_id: string, user_id: string, timestamp: number): Promise<void> {
+        const parameters = { room_id, user_id, timestamp };
+        const statement = PgDataStore.BuildUpsertStatement(
+            "member_join_times", "ON CONSTRAINT cons_member_join_times_unique", Object.keys(parameters)
+        );
+        console.debug(statement);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await this.pgPool.query(statement, Object.values(parameters) as any[]);
+    }
+
+    public async clearMemberJoinTs(room_id: string, user_id: string): Promise<void> {
+        await this.pgPool.query(
+            'DELETE FROM member_join_times WHERE user_id = ? AND room_id = ?', [user_id, room_id]
+        );
+    }
+
     public async destroy() {
         log.info("Destroy called");
         if (this.hasEnded) {

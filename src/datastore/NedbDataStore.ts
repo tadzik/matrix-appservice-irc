@@ -38,6 +38,7 @@ interface ClientConfigMap {
 export class NeDBDataStore implements DataStore {
     private serverMappings: {[domain: string]: IrcServer} = {};
     private cryptoStore?: StringCrypto;
+    private memberJoins = new Map();
     constructor(
         private userStore: UserBridgeStore,
         private userActivityStore: UserActivityStore,
@@ -86,7 +87,6 @@ export class NeDBDataStore implements DataStore {
             this.cryptoStore.load(pkeyPath);
         }
     }
-
 
     public async runMigrations() {
         const config = await this.userStore.getRemoteUser("config");
@@ -813,6 +813,17 @@ export class NeDBDataStore implements DataStore {
         throw Error('Not implemented for NeDB store');
     }
 
+    public async getMemberJoinTs(room_id: string, user_id: string): Promise<number | undefined> {
+        return this.memberJoins.get(`${room_id}/${user_id}`);
+    }
+
+    public async setMemberJoinTs(room_id: string, user_id: string, ts: number): Promise<void> {
+        this.memberJoins.set(`${room_id}/${user_id}`, ts);
+    }
+
+    public async clearMemberJoinTs(room_id: string, user_id: string): Promise<void> {
+        this.memberJoins.delete(`${room_id}/${user_id}`);
+    }
 
     public async destroy() {
         // This will no-op

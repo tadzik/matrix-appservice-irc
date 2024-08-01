@@ -167,7 +167,7 @@ export function htmlToIrc(html?: string): string|null {
     // things like case-sensitivity and spacing). Use he to decode any html entities
     // because we don't want those.
     let cleanHtml = he.decode(sanitizeHtml(html, {
-        allowedTags: ["b", "code", "i", "u", "strong", "font", "em"],
+        allowedTags: ["b", "code", "del", "i", "u", "strong", "font", "em"],
         allowedAttributes: {
             font: ["color"]
         }

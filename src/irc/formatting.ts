@@ -262,13 +262,13 @@ export function ircToHtml(text: string): string {
     // Replace all mIRC formatting characters.
     // The color character can have arguments.
     // The regex matches:
-    // - Any single 'simple' formatting character: \x02, \x11, \x1d, \x1f, \x0f and
-    //   \x16 for bold, italics, underline, reset and reverse respectively.
+    // - Any single 'simple' formatting character: \x02, \x11, \x1d, \x1e, \x1f, \x0f and
+    //   \x16 for bold, italics, underline, strikethrough, reset and reverse respectively.
     // - The colour formatting character (\x03) followed by 0 to 2 digits for
     //   the foreground colour and (optionally) a comma and 1-2 digits for the
     //   background colour.
     // eslint-disable-next-line no-control-regex
-    const colorRegex = /[\x02\x11\x1d\x1f\x0f\x16]|\x03(\d{0,2})(?:,(\d{1,2}))?/g;
+    const colorRegex = /[\x02\x11\x1d\x1e\x1f\x0f\x16]|\x03(\d{0,2})(?:,(\d{1,2}))?/g;
 
     // Maintain a small state machine of which tags are open so we can close the right
     // ones on RESET codes and toggle appropriately if they do the same code again.

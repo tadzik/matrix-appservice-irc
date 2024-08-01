@@ -60,6 +60,11 @@ describe("Formatting", function() {
                 formatting.ircToHtml("The quick brown \u0002fox\u000f jumps over the lazy \u0002dog\u000f.")
             ).toBe("The quick brown <b>fox</b> jumps over the lazy <b>dog</b>.");
         });
+        it("should <del> for strikethrough inputs", function() {
+            expect(
+                formatting.ircToHtml("The quick brown \u001efox\u000f jumps over the lazy \u001edog\u000f.")
+            ).toBe("The quick brown <del>fox</del> jumps over the lazy <del>dog</del>.");
+        });
         it("should <code> for monospace inputs", function() {
             expect(
                 formatting.ircToHtml("The quick brown \u0011fox\u000f jumps over the lazy \u0011dog\u000f.")

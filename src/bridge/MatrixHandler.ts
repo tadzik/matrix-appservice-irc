@@ -147,11 +147,6 @@ export class MatrixHandler {
     private adminHandler: AdminRoomHandler;
     private config: MatrixHandlerConfig = DEFAULTS;
 
-    private memberJoinDefaultTs = Date.now();
-    private memberJoinTs = new QuickLRU<string, number>({
-        maxSize: 8192,
-    });
-
     constructor(
         private readonly ircBridge: IrcBridge,
         config: MatrixHandlerConfig|undefined,
@@ -413,12 +408,6 @@ export class MatrixHandler {
      * @param {Object} event : The Matrix member event.
      */
     private _onMemberEvent(req: BridgeRequest, event: OnMemberEventData) {
-        if (event.content.membership === 'join') {
-            this.memberJoinTs.set(`${event.room_id}/${event.state_key}`, Date.now());
-        }
-        else {
-            this.memberJoinTs.delete(`${event.room_id}/${event.state_key}`);
-        }
         this.memberTracker?.onEvent(event);
     }
 
@@ -1352,10 +1341,9 @@ export class MatrixHandler {
             rplSource = cachedEvent.body;
         }
 
-        const senderJoinTs = this.memberJoinTs.get(`${event.room_id}/${event.sender}`) ?? this.memberJoinDefaultTs;
-        if (senderJoinTs > cachedEvent.timestamp) {
-            // User joined AFTER the event was sent (or left and joined, but we can't distinguish that).
-            // Do not treat as a reply.
+        const canAccessOriginalEvent = await bridgeIntent.matrixClient.doRequest('GET', `/_matrix/client/v1/appservice/${this.ircBridge.appServiceId}/can_user_see_event/${event.room_id}/${event.sender}/${replyEventId}`);
+        if (!canAccessOriginalEvent) {
+            // Do not allow the user to leak an event they couldn't otherwise read
             req.log.warn(`User ${event.sender} attempted to reply to an event before they were joined`);
             return {
                 formatted: rplText,

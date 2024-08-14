@@ -213,7 +213,6 @@ export class IrcBridge {
             defaultTtlMs: 10 * 60 * 1000, // 10 mins
         });
         this.matrixBanSyncer = this.config.ircService.banLists && new MatrixBanSync(this.config.ircService.banLists);
-
         this.matrixHandler = new MatrixHandler(this, this.config.ircService.matrixHandler, this.membershipQueue);
         this.privacyProtection = new PrivacyProtection(this);
         this.ircHandler = new IrcHandler(
@@ -328,7 +327,7 @@ export class IrcBridge {
             signingKey,
             ttl: config.ttlSeconds * 1000
         }, this.bridge.getIntent().matrixClient);
-        mediaProxy.start(config.bindPort);
+        await mediaProxy.start(config.bindPort);
 
         return mediaProxy;
     }

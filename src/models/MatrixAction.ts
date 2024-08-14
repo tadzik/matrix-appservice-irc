@@ -17,7 +17,7 @@ limitations under the License.
 import { IrcAction } from "./IrcAction";
 
 import ircFormatting = require("../irc/formatting");
-import { ContentRepo, Intent, MediaProxy } from "matrix-appservice-bridge";
+import { Intent, MediaProxy } from "matrix-appservice-bridge";
 import escapeStringRegexp from "escape-string-regexp";
 import logging from "../logging";
 const log = logging("MatrixAction");

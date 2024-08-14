@@ -1,7 +1,6 @@
 import { IrcBridge } from "./IrcBridge";
 import { BridgeRequest, BridgeRequestErr } from "../models/BridgeRequest";
 import {
-    ContentRepo,
     MatrixUser,
     MatrixRoom,
     MembershipQueue,

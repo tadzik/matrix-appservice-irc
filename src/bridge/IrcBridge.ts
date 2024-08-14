@@ -323,7 +323,11 @@ export class IrcBridge {
         }, true, ['sign', 'verify']);
         const publicUrl = new URL(config.publicUrl);
 
-        const mediaProxy = new MediaProxy({ publicUrl, signingKey, ttl: config.ttlSeconds * 1000 }, this.bridge.getIntent().matrixClient);
+        const mediaProxy = new MediaProxy({
+            publicUrl,
+            signingKey,
+            ttl: config.ttlSeconds * 1000
+        }, this.bridge.getIntent().matrixClient);
         mediaProxy.start(config.bindPort);
 
         return mediaProxy;

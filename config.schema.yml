@@ -495,4 +495,4 @@ properties:
                                 kickReason:
                                     type: "string"
                             required: ["regex"]
-        required: ["servers"]
+        required: ["servers", "mediaProxy"]

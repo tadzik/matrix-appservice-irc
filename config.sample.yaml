@@ -604,7 +604,7 @@ ircService:
   # Config for the media proxy, required to serve publically accessible URLs to authenticated Matrix media
   mediaProxy:
     # To generate a .jwk file:
-    # $ yarn -s ts-node src/generate-signing-key.ts > signingkey.jwk
+    # $ node src/generate-signing-key.js > signingkey.jwk
     signingKeyPath: "signingkey.jwk"
     # How long should the generated URLs be valid for
     ttlSeconds: 3600

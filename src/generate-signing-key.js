@@ -1,4 +1,4 @@
-import { webcrypto } from 'node:crypto';
+const webcrypto = require('node:crypto');
 
 async function main() {
     const key = await webcrypto.subtle.generateKey({

@@ -991,6 +991,10 @@ export class IrcBridge {
     public async kill(reason?: string) {
         log.info("Killing bridge");
         this.bridgeState = "killed";
+        if (this._mediaProxy) {
+            log.info("Killing media proxy");
+            await this._mediaProxy.close();
+        }
         log.info("Killing all clients");
         if (!this.config.connectionPool?.persistConnectionsOnShutdown) {
             this.clientPool.killAllClients(reason);

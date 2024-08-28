@@ -1,3 +1,13 @@
+2.0.1 (2024-07-04)
+==================
+
+### Internal Changes
+
+- Move to ESM for widgets. ([\#1800](https://github.com/matrix-org/matrix-appservice-irc/issues/1800))
+- Improve e2e test reliability. ([\#1803](https://github.com/matrix-org/matrix-appservice-irc/issues/1803))
+- Don't use origin_server_ts when tracking joins, use bridge-time instead. ([\#1804](https://github.com/matrix-org/matrix-appservice-irc/issues/1804))
+
+
 2.0.0 (2024-04-08)
 ==================
 

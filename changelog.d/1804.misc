@@ -1,1 +1,0 @@
-Don't use origin_server_ts when tracking joins, use bridge-time instead.

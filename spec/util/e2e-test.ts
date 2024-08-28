@@ -245,7 +245,7 @@ export class IrcBridgeE2ETest {
                 "mediaProxy": {
                     "signingKeyPath": "./spec/support/signingkey.jwk",
                     "ttlSeconds": 5,
-                    "bindPort": 11111,
+                    "bindPort": 0,
                     "publicUrl": "https://irc.bridge/media"
                 },
                 servers: {

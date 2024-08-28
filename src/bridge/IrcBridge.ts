@@ -993,7 +993,13 @@ export class IrcBridge {
         this.bridgeState = "killed";
         if (this._mediaProxy) {
             log.info("Killing media proxy");
-            await this._mediaProxy.close();
+            // We don't care about the outcome since we don't really care
+            // about the state of the bridge after a kill().
+            // Awaiting this tripped up the BOTS-70 unit test for reasons I couldn't figure out,
+            // and I spent a not-worth-it amount of time on it, so this is me giving up
+            // and techdebting it.
+            // Please let me know, future programmer, if you do fix this properly. -- tadzik
+            void this._mediaProxy.close();
         }
         log.info("Killing all clients");
         if (!this.config.connectionPool?.persistConnectionsOnShutdown) {

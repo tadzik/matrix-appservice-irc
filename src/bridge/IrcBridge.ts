@@ -519,10 +519,6 @@ export class IrcBridge {
         this.membershipQueue.registerMetrics();
     }
 
-    public get appServiceId() {
-        return this.registration.getId();
-    }
-
     public get appServiceUserId() {
         return `@${this.registration.getSenderLocalpart()}:${this.domain}`;
     }

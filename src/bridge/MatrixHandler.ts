@@ -21,7 +21,6 @@ import { trackChannelAndCreateRoom } from "./RoomCreation";
 import { renderTemplate } from "../util/Template";
 import { trimString } from "../util/TrimString";
 import { messageDiff } from "../util/MessageDiff";
-import QuickLRU = require("quick-lru");
 
 async function reqHandler(req: BridgeRequest, promise: PromiseLike<unknown>|void) {
     try {
@@ -1341,7 +1340,7 @@ export class MatrixHandler {
             rplSource = cachedEvent.body;
         }
 
-        const canAccessOriginalEvent = await bridgeIntent.matrixClient.doRequest('GET', `/_matrix/client/v1/appservice/${this.ircBridge.appServiceId}/can_user_see_event/${event.room_id}/${event.sender}/${replyEventId}`);
+        const canAccessOriginalEvent = await bridgeIntent.matrixClient.doRequest('GET', `/_matrix/client/v1/can_user_see_event/${event.room_id}/${event.sender}/${replyEventId}`);
         if (!canAccessOriginalEvent) {
             // Do not allow the user to leak an event they couldn't otherwise read
             req.log.warn(`User ${event.sender} attempted to reply to an event before they were joined`);

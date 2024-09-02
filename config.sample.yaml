@@ -2,8 +2,7 @@
 # are *REQUIRED*.
 # Unless otherwise specified, these keys CANNOT be hot-reloaded.
 homeserver:
-  # The URL to the home server for client-server API calls, also used to form the
-  # media URLs as displayed in bridged IRC channels:
+  # The URL to the home server for client-server API calls
   url: "http://localhost:8008"
 
   # Drop Matrix messages which are older than this number of seconds, according to

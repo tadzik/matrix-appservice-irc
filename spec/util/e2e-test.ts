@@ -242,6 +242,12 @@ export class IrcBridgeE2ETest {
                     ...MatrixHandlerDefaults,
                     shortReplyTresholdSeconds: opts.shortReplyTresholdSeconds ?? 0,
                 },
+                "mediaProxy": {
+                    "signingKeyPath": "./spec/support/signingkey.jwk",
+                    "ttlSeconds": 5,
+                    "bindPort": 0,
+                    "publicUrl": "https://irc.bridge/media"
+                },
                 servers: {
                     localhost: {
                         ...IrcServer.DEFAULT_CONFIG,

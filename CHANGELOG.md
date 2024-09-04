@@ -1,3 +1,27 @@
+# 3.0.0 (2024-09-04)
+====================
+
+No changes since 3.0.0-rc1.
+
+**Note**: With version 3.0.0, the bridge takes over the serving of Matrix media, which until now was the responsibility of the homeserver.
+
+To allow that, a Media Proxy needs to be configured and accessible from the internet. Please refer to the `mediaProxy` section in the config for details on how to configure it.
+
+### Features
+
+- Use MediaProxy to serve authenticated Matrix media. ([\#1805](https://github.com/matrix-org/matrix-appservice-irc/issues/1805))
+- Add strikethrough formatting support ([\#1809](https://github.com/matrix-org/matrix-appservice-irc/issues/1809))
+
+### Bugfixes
+
+- Fix spelling of ignoreIdleUsersOnStartup in IrcServer config. ([\#1810](https://github.com/matrix-org/matrix-appservice-irc/issues/1810))
+- Comment out tlsOptions property in sample config. ([\#1812](https://github.com/matrix-org/matrix-appservice-irc/issues/1812))
+
+### Internal Changes
+
+- Fix towncrier failing for wrong reasons. ([\#1813](https://github.com/matrix-org/matrix-appservice-irc/issues/1813))
+
+
 # 3.0.0-rc1 (2024-09-02)
 ========================
 

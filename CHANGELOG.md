@@ -1,3 +1,11 @@
+# 3.0.1 (2024-09-05)
+====================
+
+### Bugfixes
+
+- Make sure mediaproxy gracefully handles errors and uses authenticated endpoints. ([\#1817](https://github.com/matrix-org/matrix-appservice-irc/issues/1817))
+
+
 # 3.0.0 (2024-09-04)
 ====================
 

@@ -39,6 +39,7 @@ export interface IrcServerConfig {
     allowExpiredCerts?: boolean;
     additionalAddresses?: string[];
     onlyAdditionalAddresses: boolean;
+    legacyInvalidUserIds?: boolean;
     dynamicChannels: {
         enabled: boolean;
         published: boolean;
@@ -535,10 +536,14 @@ export class IrcServer {
     public getUserLocalpart(nick: string): string {
         // the template is just a literal string with special vars; so find/replace
         // the vars and strip the @
-        return renderTemplate(this.config.matrixClients.userTemplate, {
+        let localpart = renderTemplate(this.config.matrixClients.userTemplate, {
             server: this.domain,
             nick,
         }).substring(1); // the first character is guaranteed by config schema to be '@'
+        if (!this.config.legacyInvalidUserIds) {
+            localpart = localpart.toLowerCase();
+        }
+        return localpart;
     }
 
     public claimsUserId(userId: string): boolean {
@@ -577,8 +582,14 @@ export class IrcServer {
 
     public getUserIdFromNick(nick: string): string {
         const template = this.config.matrixClients.userTemplate;
-        return template.replace(/\$NICK/g, nick).replace(/\$SERVER/g, this.domain) +
+        let userId = template.replace(/\$NICK/g, nick).replace(/\$SERVER/g, this.domain) +
             ":" + this.homeserverDomain;
+
+        if (!this.config.legacyInvalidUserIds) {
+            userId = userId.toLowerCase();
+        }
+
+        return userId;
     }
 
     public getDisplayNameFromNick(nick: string): string {

@@ -17,8 +17,8 @@ describe("Kicking", () => {
 
     const ircUserKicker = {
         nick: "KickerNick",
-        localpart: config._server + "_KickerNick",
-        id: "@" + config._server + "_KickerNick:" + config.homeserver.domain
+        localpart: config._server + "_kickernick",
+        id: "@" + config._server + "_kickernick:" + config.homeserver.domain
     };
 
     beforeEach(async () => {

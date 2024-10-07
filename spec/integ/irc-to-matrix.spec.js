@@ -602,13 +602,13 @@ describe("IRC-to-Matrix name bridging", () => {
     it("should process all NAMEs entries", (done) => {
         const nicks = {
             Alicia: {
-                uid: "@" + roomMapping.server + "_Alicia:" + config.homeserver.domain,
+                uid: "@" + roomMapping.server + "_alicia:" + config.homeserver.domain,
             },
             Bertha: {
-                uid: "@" + roomMapping.server + "_Bertha:" + config.homeserver.domain,
+                uid: "@" + roomMapping.server + "_bertha:" + config.homeserver.domain,
             },
             Clarissa: {
-                uid: "@" + roomMapping.server + "_Clarissa:" + config.homeserver.domain,
+                uid: "@" + roomMapping.server + "_clarissa:" + config.homeserver.domain,
             }
         };
 
@@ -616,7 +616,7 @@ describe("IRC-to-Matrix name bridging", () => {
         Object.keys(nicks).forEach((n) => {
             const intent = env.clientMock._intent(nicks[n].uid);
             intent._onHttpRegister({
-                expectLocalpart: roomMapping.server + "_" + n,
+                expectLocalpart: roomMapping.server + "_" + n.toLowerCase(),
                 returnUserId: nicks[n].uid
             });
             const cli = intent.underlyingClient;
